@@ -1,156 +1,230 @@
-$(function() {
-    // Graph margin settings
-    var margin = {
-        top: 10,
-        right: 10,
-        bottom: 150,
-        left: 60
-    };
-
-    // SVG width and height
-    var width = 960;
-    var height = 500;
-
-    // Graph width and height - accounting for margins
-    var drawWidth = width - margin.left - margin.right;
-    var drawHeight = height - margin.top - margin.bottom;
-
-    /************************************** Create chart wrappers ***************************************/
-    // Create a variable `svg` in which you store a selection of the element with id `viz`
-    // Set the width and height to your `width` and `height` variables
-    var svg = d3.selection('#viz')
-    	.append('svg')
-    	.attr('height',  height)
-    	.attr('width', width);
-
-    // Append a `g` element to your svg in which you'll draw your bars. Store the element in a variable called `g`, and
-    // Transform the g using `margin.left` and `margin.top`
-    
-    var g = svg.append('g')
-    	.attr('width', drawWidth)
-    	.attr('height', drawHeight)
-    	.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 
-    // Load data in using d3's csv function.
-    d3.csv('data/airbnb.csv', function(error, csv_data) {
+function comparisonChart() {
 
 
-        /************************************** Data prep ***************************************/
-
-        // You'll need to *aggregate* the data such that, for each device-app combo, you have the *count* of the number of occurances
-        // Lots of ways to do it, but here's a slick d3 approach: 
-        // http://www.d3noob.org/2014/02/grouping-and-summing-data-using-d3nest.html
-
-        var data = d3.nest()
-        	.key(function(d) { return d.dim_device_app_combo; })
-        	.rollup(function(v) { return v.length; })
-        	.entries(csv_data);
-
-        console.log(data[0].key);
-        /************************************** Defining scales and axes ***************************************/
-
-        // Create an `xScale` for positioning the bars horizontally. Given the data type, `d3.scaleBand` is a good approach.
-
-        var keys = [];
-        for (var i = 0; i < data.length; i++) {
-        	keys.push(data[i].key);
-        }
-
-        console.log(keys);
-
-        var xScale = d3.scaleBand()
-        	.domain(keys)
-        	.range(0, drawWidth);
-        // Using `d3.axisBottom`, create an `xAxis` object that holds can be later rendered in a `g` element
-        // Make sure to set the scale as your `xScale`
-
-        var xAxis = d3.axisBottom()
-        	.scale(xScale);
+	var margin = {top: 100, right: 100, bottom: 60, left: 10};
+	var catNum = 0
 
 
-        // Create a variable that stores the maximum count using `d3.max`, and multiply this valu by 1.1
-        // to create some breathing room in the top of the graph.
-        var maxCount = d3.max(data).value * 1.1;
-        console.log(maxCount);
+	var rectHeight = 20
+	var width = 700;
+	var maleColor = "#Edf0f8";
+	var femaleColor = "#FFFFFF";
+	var labelColor = "black";
+	var chartTitle = "Population in San Francisco, by age and gender: 2010 Census";
 
+	function myChart(selection) {
 
-        // Create a `yScale` for drawing the heights of the bars. Given the data type, `d3.scaleLinear` is a good approach.
-        var values = [];
-        for (var i = 0; i < data.length; i++) {
-        	values.push(data[i].value);
-        }
+		selection.each(function (data) {
 
+			console.log(data)
+		  // ensure numbers are being interpreted as numbers, not strings
+			var rows = 0;
+			data.forEach(function(d) {
+			  	d.female = +d.female;
+			  	d.male = +d.male;
+			  	rows = rows + 1;
+			});
+			catNum = rows;
 
-        var yScale = d3.scaleLinear()
-        	.domain(values)
-        	.range(drawHeight, 0);
-
-
-        // Using `d3.axisLeft`, create a `yAxis` object that holds can be later rendered in a `g` element
-        // Make sure to set the scale as your `yScale`
-
-        var yAxis = d3.axisLeft()
-        	.scale(yScale);
-
-
-        /************************************** Rendering Axes and Axis Labels ***************************************/
-
-        // Create an `xAxisLabel` by appending a `g` element to your `svg` variable and give it a class called 'axis'.
-        // Transform the `g` element so that it will be properly positioned (need to shift x and y position)
-        // Finally, use the `.call` method to render your `xAxis` in your `xAxisLabel`        
-
-
-        var xAxisLabel = svg.append('g')
-        	.attr('transform', 'translate(' + margin.left + ',' + margin.top + drawHeight + ')')
-        	.attr('class', 'axis')
-    		.call(xAxis);
-
-        // To rotate the text elements, select all of the `text` elements in your `xAxisLabel and rotate them 45 degrees        
-        // This may help: https://bl.ocks.org/mbostock/4403522
-
-		xAxisLabel.selectAll('text')
-            .attr("y", 0)
-    		.attr("x", 9)
-    		.attr("dy", ".35em")
-    		.attr("transform", "rotate(180)")
-    		.style("text-anchor", "start");
-
-
-        // Create a text element to label your x-axis by appending a text element to your `svg` 
-        // You'll need to use the `transform` property to position it below the chart
-        // Set its class to 'axis-label', and set the text to "Device-App Combinations"
-        var xText = svg.append('text')
-        	.text('Device-App Combinations')
-        	.attr('transform', 'translate(' + (margin.left + drawWidth / 2) + ',' + (margin.top + drawHeight + 40) + ')')
-        	.attr('class', 'axis-label');
-
-
-        // Using the same pattern as your x-axis, append another g element and create a y-axis for your graph
-        var yAxisLabel = svg.append('g')
-        	.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-    		.call(yAxis);
-
-
-        // Using the same pattern as your x-axis, append a text element to label your y axis
-        // Set its class to 'axis-label', and set the text to "Count"
-
-        var yText = svg.append('text')
-        	.text('Count')
-        	.attr('transform', 'translate(' + margin.left + ',' + drawHeight / 2 + ')')
-        	.attr('class', 'axis-label');
-
-        /************************************** Drawing Data ***************************************/
-
-        // Select all elements with the class 'bar' in your `g` element. Then, conduct a data-join
-        // with your parsedData array to append 'rect' elements with `he class set as 'bar'
-        //var bars = g.selectAll('bar').data(data, function(d) { return d.value });
+			var height = rectHeight * catNum;
 
 
 
-        // Determine which elements are new to the screen (`enter`), and for each element, 
-        // Append a `rect` element, setting the `x`, `y`, `width`, and `height` attributes using your data and scales
+			var svg = d3.select(this).append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+
+			var chart = svg.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-    });
+			var xScale = d3.scale.linear()
+					.range([0,width/2]);
+
+			var maleScale = d3.scale.linear()
+				.range([0,-width/2]);
+
+			var yScale = d3.scale.linear()
+				.range([height,0]);
+
+			var maleAxis = d3.svg.axis().scale(maleScale).orient("bottom")
+
+			var xAxis = d3.svg.axis()
+				.scale(xScale)
+				.orient("bottom");
+
+
+
+			//
+			var xMax = d3.max(data, function(d) {
+				if(d.male > d.female) return d.male;
+					return d.female;
+			})
+			xScale.domain([0, xMax]);
+			maleScale.domain([0,xMax])
+
+			//
+			yScale.domain([0, catNum]);
+
+			//
+			var labels = svg.append("g")
+				.attr("class", "labels")
+
+			labels.append("text").attr("transform", "translate(" + (width / 2 + 14) + "," + (margin.top - 15) + ")")
+				.text("male    |    female")
+				.attr("text-anchor", "middle")
+
+			//
+			chart.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(" + width / 2 + "," + (height + 5) + ")")
+				.call(xAxis);
+
+			chart.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(" + width / 2 + "," + (height + 5) + ")")
+				.call(maleAxis);
+
+			//
+			var rectangleGroup = chart.selectAll(".rectangle-group")
+				.data(data)
+				.enter()
+				// and group
+				.append("g")
+				.attr("class", "rectangle-group")
+				.attr("transform", function(d,idx) { return "translate(0," + yScale(idx + 1) + ")"; })
+
+			//
+			rectangleGroup.append("rect")
+				.attr("class", "female")
+				.attr("x", width / 2)
+				.attr("height", rectHeight)
+				.attr("width", function(d){ return xScale(d.female)})
+				.attr("y", 0)
+				.attr("fill", femaleColor)
+
+			rectangleGroup.append("rect")
+				.attr({
+					"class": "male",
+					"x": function(d){return width / 2 - xScale(d.male)},
+					"height": rectHeight,
+					"width": function(d){ return xScale(d.male)},
+					"y": 0,
+					"fill": maleColor,
+				})
+
+			//
+			rectangleGroup.append("text")
+				.text(function(d) { return d.age; })
+				.attr("fill", labelColor)
+				.attr("dx", xScale(xScale.domain()[1]))
+				.attr("dy", +12);
+
+
+			svg.append("text")
+		        .attr("x", (width / 2) + margin.left + 10)             
+		        .attr("y", 60)
+		        .attr("text-anchor", "middle")  
+		        .style("font-size", "25px") 
+		        .style("text-decoration", "underline")  
+		        .text(chartTitle);
+
+		})
+
+	}
+
+	myChart.rectHeight = function(value) {     
+		if (!arguments.length) 
+			return rectHeight;     
+		rectHeight = value;     
+		return myChart;   
+	};
+
+	myChart.width = function(value) {
+		if (!arguments.length)
+			return width;
+		width = value;
+		return myChart;
+	}
+
+	myChart.maleColor = function(value) {
+		if (!arguments.length)
+			return maleColor;
+		maleColor = value;
+		return myChart;
+	}
+
+	myChart.femaleColor = function(value) {
+		if (!arguments.length)
+			return femaleColor;
+		femaleColor = value;
+		return myChart;
+	}
+
+	myChart.labelColor = function(value) {
+		if (!arguments.length)
+			return labelColor;
+		labelColor = value;
+		return myChart;
+	}
+
+	myChart.chartTitle = function(value) {
+		if (!arguments.length)
+			return chartTitle;
+		chartTitle = value;
+		return myChart;
+	}
+
+	return myChart;
+
+}
+
+
+var file1 = "data/sfpopulation.csv"
+
+
+d3.csv(file1, function(data) {
+	var usedData = data;
+
+	var compChart = comparisonChart()
+	d3.select('#myDiv')
+        .datum(usedData)
+        .call(compChart);
+
+
 });
+
+
+
+d3.csv(file1, function(data) {
+	var usedData = data;
+
+	var compChart = comparisonChart().rectHeight(40).maleColor("#00ff00").femaleColor("purple").labelColor("red").width(1000)
+	d3.select('#myDiv')
+        .datum(usedData)
+        .call(compChart);
+
+
+});
+
+var file2 = "data/2017worldpopulation.csv"
+
+d3.csv(file2, function(data) {
+	var usedData = data;
+
+	var compChart = comparisonChart().rectHeight(10).chartTitle("2017 World Population by Age and Sex")
+	d3.select('#myDiv')
+        .datum(usedData)
+        .call(compChart);
+
+
+});
+
+
+
+
+
+
+
