@@ -1,0 +1,26 @@
+@import url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic);
+
+body {
+    font-family: arial, sans;
+    font-size: 11px;
+}
+
+.axis line, .axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+  
+.axis text {
+    font-size: 8px;
+}
+
+.rectangle-group {
+    text-anchor: middle;
+    fill: grey
+}  
+.rectangle-group rect {
+    stroke: grey;
+    stroke-width: .5
+}
