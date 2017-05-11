@@ -18,7 +18,7 @@ function comparisonChart() {
 
 		selection.each(function (data) {
 
-			console.log(data)
+			// console.log(data)
 		  // ensure numbers are being interpreted as numbers, not strings
 			var rows = 0;
 			data.forEach(function(d) {
@@ -182,45 +182,45 @@ function comparisonChart() {
 }
 
 
-var file1 = "data/sfpopulation.csv"
+// var file1 = "data/sfpopulation.csv"
 
 
-d3.csv(file1, function(data) {
-	var usedData = data;
+// d3.csv(file1, function(data) {
+// 	var usedData = data;
 
-	var compChart = comparisonChart()
-	d3.select('#myDiv')
-        .datum(usedData)
-        .call(compChart);
-
-
-});
+// 	var compChart = comparisonChart()
+// 	d3.select('#myDiv')
+//         .datum(usedData)
+//         .call(compChart);
 
 
-
-d3.csv(file1, function(data) {
-	var usedData = data;
-
-	var compChart = comparisonChart().rectHeight(40).maleColor("#00ff00").femaleColor("purple").labelColor("red").width(1000)
-	d3.select('#myDiv')
-        .datum(usedData)
-        .call(compChart);
+// });
 
 
-});
 
-var file2 = "data/2017worldpopulation.csv"
+// d3.csv(file1, function(data) {
+// 	var usedData = data;
 
-d3.csv(file2, function(data) {
-	var usedData = data;
-
-	var compChart = comparisonChart().rectHeight(10).chartTitle("2017 World Population by Age and Sex")
-	d3.select('#myDiv')
-        .datum(usedData)
-        .call(compChart);
+// 	var compChart = comparisonChart().rectHeight(40).maleColor("#00ff00").femaleColor("purple").labelColor("red").width(1000)
+// 	d3.select('#myDiv')
+//         .datum(usedData)
+//         .call(compChart);
 
 
-});
+// });
+
+// var file2 = "data/2017worldpopulation.csv"
+
+// d3.csv(file2, function(data) {
+// 	var usedData = data;
+
+// 	var compChart = comparisonChart().rectHeight(10).chartTitle("2017 World Population by Age and Sex")
+// 	d3.select('#myDiv')
+//         .datum(usedData)
+//         .call(compChart);
+
+
+// });
 
 
 
