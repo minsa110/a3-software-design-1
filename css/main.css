@@ -1,5 +1,11 @@
-@import url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css);
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic);
+
+header {
+    background-color: #d3d3d3;
+    padding-bottom: 35px;
+    padding-left: 35px;
+    padding-top: 10px;
+}
+
 
 body {
     font-family: arial, sans;
@@ -24,3 +30,4 @@ body {
     stroke: grey;
     stroke-width: .5
 }
+
