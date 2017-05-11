@@ -9,6 +9,8 @@ https://chowicus.github.io/a3-software-design/
 
 It provides a variety of methods to allow a user to dynamically change the fields in their chart type to allow for a more flexible and reusable chart.  This allows users to dynamically change the way that their chart appears, which is especially useful when using a different dataset.  Outlined below are the six dynamically modifiable methods that this API supports:
 
+# Methods
+
 ####	rectHeight
 rectHeight is the height of the bars displayed at each rectangle of the chart.  Each group of data displays a bar with a height equal to the rectHeight.  The default value is 20.
 
@@ -29,4 +31,35 @@ chartTitle is the title of the chart.  It is displayed prominently above the cha
 
 #### dataset
 Finally, the dataset is the most important aspect of the reusable API.  The dataset cannot be changed through an individual getter/setter method, but is instead changed through the d3.csv(file, myChart) method.  Changing the input file will change the displayed values.  It is necessary for all data being input to follow a single formula:  a csv file with 3 columns.  The first column titled "age", the second column titled "male", and the third column titled "female".  If these standards are maintained, the comparison chart API can be reused effectively.
+
+# Usage
+
+A standard initialization is shown here:
+
+	d3.csv("data/sfpopulation.csv", function(data) {
+    var usedData = data;
+
+    var compChart = comparisonChart()
+    d3.select('#myDiv')
+          .datum(usedData)
+          .call(compChart);
+    });
+
+
+
+An example method is shown here:
+
+	myChart.rectHeight = function(value) {     
+		if (!arguments.length) 
+			return rectHeight;     
+		rectHeight = value;     
+		return myChart;   
+	};
+
+This method controls chart rectHeight and is located within the chart function.  To change the rectHeight in the initialization to 10, you would do this:
+
+    var compChart = comparisonChart().rectHeight(10)
+
+<b>All methods function in this way, and all fields can be changed in this way.  Additionally, methods can be chained in standard D3 format.</b>
+
 
